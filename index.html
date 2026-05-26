@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BillCraft ERP - Free GST Tax Invoice Generator & Bill Maker</title>
+  
+  <!-- SEO Tags -->
+  <meta name="description"
+    content="Create GST tax invoices and professional bills instantly with BillCraft ERP. Fully editable templates inspired by Tally & Marg ERP. 100% free, offline-ready, dynamic calculations, dynamic UPI payment QR codes, and custom logo uploads.">
+  <meta name="keywords"
+    content="tax invoice generator, GST invoice generator, free bill maker, online invoice creator, GST bill maker, invoice template, Tally ERP invoice format, Marg ERP bill, India GST bill generator, GST billing software, easy invoice generator">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://billcraft-erp.vercel.app/">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://billcraft-erp.vercel.app/">
+  <meta property="og:title" content="BillCraft ERP - Free GST Tax Invoice Generator & Bill Maker">
+  <meta property="og:description" content="Generate professional GST-compliant tax invoices instantly. Fully editable templates, automated calculations, smart tax routing, and UPI pay QR codes.">
+  <meta property="og:image" content="https://billcraft-erp.vercel.app/og-image.png">
+
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://billcraft-erp.vercel.app/">
+  <meta property="twitter:title" content="BillCraft ERP - Free GST Tax Invoice Generator & Bill Maker">
+  <meta property="twitter:description" content="Generate professional GST-compliant tax invoices instantly. Fully editable templates, automated calculations, smart tax routing, and UPI pay QR codes.">
+  <meta property="twitter:image" content="https://billcraft-erp.vercel.app/og-image.png">
+
+  <!-- Structured Data / JSON-LD Google Rich Snippets Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "BillCraft ERP",
+    "alternateName": "Tax Invoice Generator & Bill Maker",
+    "url": "https://billcraft-erp.vercel.app/",
+    "image": "https://billcraft-erp.vercel.app/og-image.png",
+    "description": "A free, offline-first, professional tax invoice generator and bill maker supporting Tally and Marg ERP structures, automatic GST routing, and UPI QR payments.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript. Requires HTML5.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0.00",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "GST-Compliant Invoicing",
+      "Tally & Marg ERP Print Layouts",
+      "Instant UPI Scan-To-Pay QR Generator",
+      "Smart CGST/SGST/IGST Tax Routing",
+      "Offline-First Draft Storage",
+      "Fully Editable direct WYSIWYG A4 Sheets"
+    ]
+  }
+  </script>
+
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230f172a'/><path d='M30 30h40v40H30z' fill='none' stroke='%2338bdf8' stroke-width='8'/><path d='M45 42h18M45 52h18M37 42h2M37 52h2' stroke='%2338bdf8' stroke-width='6' stroke-linecap='round'/></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Roboto+Condensed:wght@400;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- Application Dashboard Layout -->
+  <div class="app-container">
+
+    <!-- Sidebar Controls -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <svg class="brand-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <h2>BillCraft <span>ERP</span></h2>
+        </div>
+        <p class="brand-tagline">Professional Invoice Engine</p>
+      </div>
+
+      <div class="sidebar-menu">
+
+        <!-- Templates Toggler Section -->
+        <div class="menu-section">
+          <h3>Choose Invoice Layout</h3>
+          <div class="template-selector">
+            <button class="template-btn active" data-template="classic" id="btn-tmpl-classic">
+              <div class="tmpl-icon tally-icon"></div>
+              <span>Classic ERP (Tally/Marg)</span>
+            </button>
+            <button class="template-btn" data-template="gem" id="btn-tmpl-gem">
+              <div class="tmpl-icon gem-icon"></div>
+              <span>GeM Standard</span>
+            </button>
+            <button class="template-btn" data-template="modern" id="btn-tmpl-modern">
+              <div class="tmpl-icon modern-icon"></div>
+              <span>Modern Corporate</span>
+            </button>
+<!-- UNDER DEVELOPMENT
+            <button class="template-btn" data-template="minimalist" id="btn-tmpl-minimalist">
+              <div class="tmpl-icon minimalist-icon"></div>
+              <span>Creative Minimalist</span>
+            </button>
+            <button class="template-btn" data-template="nordic" id="btn-tmpl-nordic">
+              <div class="tmpl-icon nordic-icon"></div>
+              <span>Premium Nordic Minimal</span>
+            </button>
+-->
+          </div>
+        </div>
+
+        <!-- Global Settings Section -->
+        <div class="menu-section">
+          <h3>Invoice Customization</h3>
+
+          <div class="setting-item">
+            <label for="theme-color">Accent Color</label>
+            <div class="color-picker-wrapper">
+              <input type="color" id="theme-color" value="#0f172a">
+              <div class="color-presets">
+                <span class="color-preset active" style="background-color: #0f172a;" data-color="#0f172a"></span>
+                <span class="color-preset" style="background-color: #005f73;" data-color="#005f73"></span>
+                <span class="color-preset" style="background-color: #1b4332;" data-color="#1b4332"></span>
+                <span class="color-preset" style="background-color: #5c0624;" data-color="#5c0624"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="toggle-control">
+              <span>Show Company Logo</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-logo">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="logo-upload-container hidden" id="logo-upload-box">
+              <label class="logo-upload-label" for="logo-file">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                <span>Upload Logo (PNG/JPG)</span>
+              </label>
+              <input type="file" id="logo-file" accept="image/*" class="file-input">
+              <button class="btn btn-sm btn-danger hidden" id="btn-remove-logo">Remove Logo</button>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="toggle-control">
+              <span>Add UPI Scan to Pay QR</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-qr" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="qr-settings" id="qr-settings-box">
+              <label for="upi-id-input">Merchant UPI ID</label>
+              <input type="text" id="upi-id-input" placeholder="merchant@upi" value="xxx@yyy">
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="toggle-control">
+              <span>Smart Tax Routing</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-smart-tax" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <p class="setting-help">Auto-routing CGST/SGST if Company State matches Buyer State, else IGST.</p>
+          </div>
+
+          <div class="setting-item" id="manual-tax-box" style="display: none;">
+            <label for="manual-tax-type">Override Tax Scheme</label>
+            <select id="manual-tax-type">
+              <option value="intra">Intra-State (CGST + SGST)</option>
+              <option value="inter">Inter-State (IGST)</option>
+            </select>
+          </div>
+
+          <div class="setting-item">
+            <label for="page-margins">A4 Margins (Print Only)</label>
+            <div class="slider-container">
+              <input type="range" id="page-margins" min="5" max="25" value="12" step="1">
+              <span id="margin-value">12mm</span>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <label for="page-orientation">Page Orientation</label>
+            <select id="page-orientation">
+              <option value="portrait">A4 Portrait (Vertical)</option>
+              <option value="landscape">A4 Landscape (Horizontal)</option>
+            </select>
+          </div>
+
+          <div class="setting-item">
+            <label for="font-family-select">Typography Theme</label>
+            <select id="font-family-select">
+              <option value="sans">Modern Corporate</option>
+              <option value="mono">Classic Dot-Matrix (Monospace)</option>
+            </select>
+          </div>
+
+          <div class="setting-item">
+            <div class="toggle-control">
+              <span>Show Discount Column</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-discount" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="toggle-control">
+              <span>Show HSN/SAC Column</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-hsn" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="toggle-control">
+              <span>Show Transport Details</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-transport" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="toggle-control">
+              <span>Show Bank Details</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-bank" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="toggle-control">
+              <span>Show Notes & Declarations</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-notes" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="toggle-control">
+              <span>Footer on New Page</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-footer-page">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <p style="font-size: 10px; color: #94a3b8; margin-top: 3px; line-height: 1.4;">
+              ON: Footer always starts on a fresh page. Items fill pages maximally.<br>
+              OFF: Footer shares the last items page (auto-splits if needed).
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Quick Data Controls -->
+        <div class="menu-section">
+          <h3>Quick Controls</h3>
+          <div class="action-grid">
+            <button class="btn btn-primary btn-icon" id="btn-print">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+              </svg>
+              Print / Save PDF
+            </button>
+            <button class="btn btn-secondary btn-icon" id="btn-demo" title="Load Tally ERP Demo Data">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+              </svg>
+              Load Tally Demo
+            </button>
+            <button class="btn btn-secondary btn-icon" id="btn-demo-surbhi" title="Load GeM Demo Data">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+              </svg>
+              Load GeM Demo
+            </button>
+            <button class="btn btn-outline btn-icon" id="btn-reset">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+              Clear Invoice
+            </button>
+          </div>
+        </div>
+
+        <!-- Backup & Migration -->
+        <div class="menu-section">
+          <h3>Draft Management</h3>
+          <div class="flex-column gap-2">
+            <button class="btn btn-outline btn-sm w-100" id="btn-export">Export Draft (.json)</button>
+            <button class="btn btn-outline btn-sm w-100" id="btn-import-trigger">Import Draft (.json)</button>
+            <input type="file" id="import-file" accept=".json" class="hidden">
+          </div>
+        </div>
+
+      </div>
+
+      <div class="sidebar-footer">
+        <p>Vercel-Ready &bull; Local Storage Secured</p>
+        <span class="version">v1.1.0</span>
+      </div>
+    </aside>
+
+    <!-- Main Workspace Content (A4 Invoice Canvas) -->
+    <main class="workspace">
+
+      <!-- Quick Floating Mode Indicator / Mobile Toggles -->
+      <header class="workspace-header no-print">
+        <button class="btn-sidebar-toggle" id="btn-sidebar-toggle" aria-label="Toggle Sidebar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <div class="editor-status">
+          <span class="status-indicator live"></span>
+          <span>Draft Auto-saved &bull; Click anywhere on A4 to Edit Directly</span>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-primary" id="btn-print-floating">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Print Invoice
+          </button>
+        </div>
+      </header>
+
+      <!-- The A4 Sheet Simulator Container -->
+      <div class="a4-sheet-container" id="a4-sheet-container">
+        <!-- Multi-page Invoice Sheet (populated by JS) -->
+        <div id="invoice-sheet">
+          <div id="invoice-render-area"></div>
+        </div>
+      </div>
+
+
+    </main>
+
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+
+</html>

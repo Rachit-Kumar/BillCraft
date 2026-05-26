@@ -1,0 +1,1661 @@
+/* ==========================================================================
+   DESIGN SYSTEM & VARIABLES (Modern Editor Dark Slate Theme)
+   ========================================================================== */
+:root {
+  /* Dashboard Colors */
+  --bg-app: #090d16;
+  --bg-sidebar: #0f172a;
+  --bg-card: rgba(30, 41, 59, 0.4);
+  --bg-card-hover: rgba(30, 41, 59, 0.7);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-active: rgba(56, 189, 248, 0.4);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent: #38bdf8;
+  --accent-rgb: 56, 189, 248;
+  --success: #10b981;
+  --danger: #ef4444;
+  --font-sans: 'Outfit', 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  /* Invoice Customization (Overridden by JS) */
+  --invoice-accent: #0f172a;
+  --invoice-font: 'Inter', sans-serif;
+  
+  /* Layout Sizing */
+  --sidebar-width: 320px;
+  --header-height: 60px;
+}
+
+/* ==========================================================================
+   RESET & BASE STYLES
+   ========================================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  overflow-x: hidden;
+  height: 100vh;
+}
+
+input, select, textarea, button {
+  font-family: inherit;
+  color: inherit;
+}
+
+/* ==========================================================================
+   APP SHELL / LAYOUT SYSTEM
+   ========================================================================== */
+.app-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ==========================================================================
+   SIDEBAR COMPONENT
+   ========================================================================== */
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex-shrink: 0;
+  z-index: 10;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--accent);
+}
+
+.brand h2 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.brand h2 span {
+  color: var(--accent);
+  font-weight: 400;
+  font-size: 14px;
+  border: 1px solid var(--border-active);
+  padding: 1px 4px;
+  border-radius: 4px;
+  margin-left: 2px;
+}
+
+.brand-tagline {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.sidebar-menu {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex-grow: 1;
+}
+
+.menu-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.menu-section h3 {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+
+/* Template Selectors */
+.template-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.template-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.template-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.template-btn.active {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: var(--accent);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.15);
+}
+
+.tmpl-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.tally-icon {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2'><rect x='3' y='3' width='18' height='18' rx='2'/><path d='M9 3v18M15 3v18M3 9h18M3 15h18'/></svg>");
+}
+.gem-icon {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2'><rect x='3' y='3' width='18' height='18' rx='2'/><path d='M3 9h18M3 15h9M9 9v12'/></svg>");
+}
+.modern-icon {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a855f7' stroke-width='2'><circle cx='12' cy='12' r='10'/><path d='M8 12h8M12 8v8'/></svg>");
+}
+/* UNDER DEVELOPMENT
+.minimalist-icon {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2'><path d='M4 4h16v16H4V4zm4 4h8v8H8V8z'/></svg>");
+}
+.nordic-icon {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2306b6d4' stroke-width='2'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>");
+}
+*/
+
+.template-btn span {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+/* Form Settings Controls */
+.setting-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.setting-item label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.setting-item input[type="text"],
+.setting-item select {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--text-main);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.setting-item input[type="text"]:focus,
+.setting-item select:focus {
+  border-color: var(--accent);
+}
+
+/* Color Picker */
+.color-picker-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#theme-color {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  background: none;
+}
+
+#theme-color::-webkit-color-swatch {
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+  padding: 0;
+}
+
+.color-presets {
+  display: flex;
+  gap: 8px;
+}
+
+.color-preset {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.color-preset:hover {
+  transform: scale(1.1);
+}
+
+.color-preset.active {
+  border-color: #fff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+/* Toggle Switch */
+.toggle-control {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggle-control span {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255,255,255,0.1);
+  transition: .2s;
+  border-radius: 20px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .2s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--success);
+}
+
+input:checked + .slider:before {
+  transform: translateX(18px);
+}
+
+.setting-help {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+/* Slider Controls */
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.slider-container input[type="range"] {
+  flex-grow: 1;
+  cursor: pointer;
+}
+
+.slider-container span {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  width: 45px;
+  text-align: right;
+  color: var(--accent);
+}
+
+/* Logo Upload Container */
+.logo-upload-container {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.logo-upload-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed var(--border-color);
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.logo-upload-label:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  border-color: var(--accent);
+}
+
+.file-input {
+  display: none;
+}
+
+/* Utility buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.btn-primary {
+  background-color: var(--accent);
+  color: #0f172a;
+}
+.btn-primary:hover {
+  background-color: #7dd3fc;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+}
+
+.btn-secondary {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+}
+.btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+.btn-outline:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-danger {
+  background-color: var(--danger);
+  color: white;
+}
+.btn-danger:hover {
+  background-color: #f87171;
+}
+
+.btn-icon svg {
+  flex-shrink: 0;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+.gap-2 {
+  gap: 8px;
+}
+.w-100 {
+  width: 100%;
+}
+.hidden {
+  display: none !important;
+}
+
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   WORKSPACE & CANVAS AREA
+   ========================================================================== */
+.workspace {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--bg-app);
+  overflow: hidden;
+}
+
+.workspace-header {
+  height: var(--header-height);
+  background-color: var(--bg-sidebar);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  z-index: 5;
+}
+
+.btn-sidebar-toggle {
+  background: none;
+  border: none;
+  color: var(--text-main);
+  cursor: pointer;
+  display: none; /* Only visible on smaller screens */
+}
+
+.editor-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--success);
+  box-shadow: 0 0 8px var(--success);
+  position: relative;
+}
+
+.status-indicator.live::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--success);
+  animation: ping 1.5s infinite;
+}
+
+@keyframes ping {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+.a4-sheet-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  background-color: #0b0f19;
+  background-image: 
+    radial-gradient(#1e293b 1px, transparent 1px), 
+    radial-gradient(#1e293b 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+}
+
+/* ==========================================================================
+   A4 SHEET SIMULATOR (DRAFTING BOARD LOOK)
+   ========================================================================== */
+/* The invoice-sheet container wraps all pages — flexbox column for screen, block for print */
+#invoice-sheet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.invoice-page {
+  background-color: #ffffff;
+  color: #1e293b;
+  width: 210mm;
+  min-height: 297mm;
+  padding: var(--margin-size, 12mm);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 1px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  font-size: 12px;
+  line-height: 1.35;
+  box-sizing: border-box;
+}
+
+/* Visual gap between pages in screen mode (simulates page break) */
+.invoice-page + .invoice-page {
+  margin-top: 32px;
+  border-top: none;
+}
+
+/* Continuation page header shown on pages 2+ for reference (visible in print, hidden on screen) */
+.page-continuation-header {
+  display: none; /* Hidden on screen — shown via print CSS */
+  border-bottom: 2px solid #000;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+  font-size: 10px;
+  color: #555;
+}
+
+/* Screen: show it as a subtle banner on pages 2+ */
+.invoice-page-continuation .page-continuation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}
+
+/* Landscape multi-page */
+.invoice-page.landscape {
+  width: 297mm;
+  min-height: 210mm;
+}
+
+/* In-place Editable Indicators */
+[contenteditable="true"] {
+  outline: none;
+  cursor: text;
+  transition: background-color 0.15s ease;
+  border-bottom: 1px dotted transparent;
+}
+
+.workspace [contenteditable="true"]:hover {
+  background-color: rgba(56, 189, 248, 0.05);
+  border-bottom-color: rgba(56, 189, 248, 0.5);
+  border-radius: 2px;
+}
+
+.workspace [contenteditable="true"]:focus {
+  background-color: rgba(56, 189, 248, 0.08);
+  border-bottom-color: var(--accent);
+  box-shadow: 0 2px 5px rgba(56, 189, 248, 0.08);
+}
+
+/* Clean up carriage returns in contenteditable */
+[contenteditable="true"] br {
+  display: block;
+}
+
+/* Placeholders inside contenteditable */
+[contenteditable="true"]:empty:before {
+  content: attr(placeholder);
+  color: #94a3b8;
+  font-style: italic;
+  display: block;
+}
+
+/* ==========================================================================
+   INTERACTIVE INVOICE EDITOR WIDGETS (ADD/REMOVE ROWS)
+   ========================================================================== */
+.template-tally td:first-child,
+.template-gem td:first-child,
+.template-modern td:first-child {
+  position: relative;
+}
+
+.table-row-actions {
+  display: flex;
+  gap: 4px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  background-color: #f1f5f9;
+  z-index: 10;
+}
+
+tr {
+  position: relative;
+}
+
+tr:hover .table-row-actions {
+  opacity: 1;
+}
+
+.btn-row-action {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  background-color: #f1f5f9;
+  color: #475569;
+  transition: all 0.15s ease;
+}
+
+.btn-row-action:hover {
+  background-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.btn-row-delete:hover {
+  background-color: #fee2e2;
+  color: var(--danger);
+}
+
+.btn-row-action svg {
+  width: 14px;
+  height: 14px;
+}
+
+.table-append-row {
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+  background-color: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-top: none;
+}
+
+.btn-add-row {
+  background: none;
+  border: none;
+  color: #0284c7;
+  font-weight: 600;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.btn-add-row:hover {
+  background-color: #f0f9ff;
+  color: #0369a1;
+}
+
+/* ==========================================================================
+   TEMPLATE 1: CLASSIC TALLY / MARG ERP GRID STYLE
+   ========================================================================== */
+.template-tally {
+  font-family: 'Inter', sans-serif;
+  color: #000000;
+  line-height: 1.3;
+}
+
+.template-tally .tally-double-border {
+  border: 3px double #000000;
+  width: 100%;
+}
+
+.template-tally .tally-bordered-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.template-tally .tally-bordered-table th,
+.template-tally .tally-bordered-table td {
+  border: 1px solid #000000;
+  padding: 4px 6px;
+  font-size: 11px;
+}
+
+.template-tally .tally-bordered-table th {
+  background-color: #f1f5f9;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.template-tally .center { text-align: center; }
+.template-tally .right { text-align: right; }
+.template-tally .bold { font-weight: bold; }
+
+.template-tally .tally-header {
+  border-bottom: 2px solid #000000;
+  padding: 8px;
+  text-align: center;
+}
+
+.template-tally .tally-company-box {
+  padding: 8px;
+  border-bottom: 1px solid #000000;
+}
+
+.template-tally .tally-bill-details {
+  border-bottom: 1px solid #000000;
+}
+
+.template-tally .tally-bill-to {
+  padding: 8px;
+}
+
+.template-tally .tally-grid-table th {
+  font-size: 10px;
+}
+
+.template-tally .tally-grid-table td {
+  vertical-align: top;
+}
+
+.template-tally .tax-group-header {
+  font-size: 9px;
+  text-align: center;
+  border-bottom: 1px solid #000000;
+}
+
+.template-tally .tally-bottom-grid {
+  border-top: 1px solid #000000;
+}
+
+.template-tally .tally-bank-box {
+  padding: 8px;
+}
+
+.template-tally .tally-sign-box {
+  padding: 8px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+/* ==========================================================================
+   TEMPLATE 2: GEM STANDARD / BOX STYLE
+   ========================================================================== */
+.template-gem {
+  font-family: 'Roboto Condensed', sans-serif;
+  color: #1e293b;
+  line-height: 1.4;
+}
+
+.template-gem .gem-frame {
+  border: 1px solid #0f172a;
+}
+
+.template-gem .gem-title-block {
+  border-bottom: 1px solid #0f172a;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.template-gem .gem-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.template-gem .gem-company-block {
+  border-bottom: 1px solid #0f172a;
+  padding: 12px;
+  text-align: center;
+}
+
+.template-gem .gem-parties-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid #0f172a;
+}
+
+.template-gem .gem-party-col {
+  padding: 12px;
+}
+
+.template-gem .gem-party-col:first-child {
+  border-right: 1px solid #0f172a;
+}
+
+.template-gem .gem-party-title {
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #0f172a;
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+  color: var(--invoice-accent);
+}
+
+.template-gem .gem-meta-bar {
+  background-color: #f8fafc;
+  border-bottom: 1px solid #0f172a;
+  padding: 6px 12px;
+  font-size: 11px;
+}
+
+.template-gem .gem-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.template-gem .gem-table th,
+.template-gem .gem-table td {
+  border: 1px solid #0f172a;
+  padding: 6px 8px;
+  font-size: 11px;
+}
+
+.template-gem .gem-table th {
+  background-color: #f1f5f9;
+  font-weight: 700;
+  text-align: center;
+}
+
+.template-gem .gem-bottom-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  border-top: 1px solid #0f172a;
+}
+
+.template-gem .gem-bottom-left {
+  padding: 12px;
+  border-right: 1px solid #0f172a;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.template-gem .gem-bottom-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.template-gem .gem-total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 11px;
+}
+
+.template-gem .gem-grand-total {
+  background-color: #f8fafc;
+  border-bottom: none;
+  font-weight: 700;
+  font-size: 12px;
+  border-top: 1px solid #0f172a;
+  padding: 8px 12px;
+}
+
+.template-gem .gem-terms-block {
+  border-top: 1px solid #0f172a;
+  padding: 12px;
+}
+
+.template-gem .gem-footer-block {
+  border-top: 1px solid #0f172a;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100px;
+}
+
+.template-gem .gem-footer-left {
+  padding: 12px;
+  border-right: 1px solid #0f172a;
+}
+
+.template-gem .gem-footer-right {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+/* ==========================================================================
+   TEMPLATE 3: MODERN CORPORATE STYLE
+   ========================================================================== */
+.template-modern {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  color: #1e293b;
+  line-height: 1.5;
+}
+
+.template-modern .modern-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+}
+
+.template-modern .modern-logo-box {
+  max-width: 150px;
+}
+
+.template-modern .modern-title-block {
+  text-align: right;
+}
+
+.template-modern .modern-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--invoice-accent);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.template-modern .modern-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  background-color: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-size: 11px;
+}
+
+.template-modern .modern-meta-item strong {
+  color: var(--invoice-accent);
+}
+
+.template-modern .modern-parties-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.template-modern .modern-party-card {
+  background: #f8fafc;
+  border-left: 3px solid var(--invoice-accent);
+  padding: 16px;
+  border-radius: 8px;
+  height: 100%;
+}
+
+.template-modern .modern-party-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--invoice-accent);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.template-modern .modern-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 30px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.template-modern .modern-table th,
+.template-modern .modern-table td {
+  padding: 10px 12px;
+  font-size: 11px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+.template-modern .modern-table th {
+  background-color: var(--invoice-accent);
+  color: #ffffff;
+  font-weight: 600;
+  border-bottom: none;
+  font-size: 11px;
+}
+
+.template-modern .modern-table tr:last-child td {
+  border-bottom: none;
+}
+
+.template-modern .modern-bottom-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.template-modern .modern-payment-card {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.template-modern .modern-payment-title {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--invoice-accent);
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 6px;
+}
+
+.template-modern .modern-bank-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 16px;
+  font-size: 11px;
+}
+
+.template-modern .modern-bank-label {
+  color: #64748b;
+}
+
+.template-modern .modern-qr-block {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: #ffffff;
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.template-modern .modern-qr-code {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.template-modern .modern-qr-text {
+  font-size: 10px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.template-modern .modern-totals-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-self: flex-start;
+}
+
+.template-modern .modern-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.template-modern .modern-grand-total {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--invoice-accent);
+  border-top: 2px solid var(--invoice-accent);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+.template-modern .modern-words-box {
+  font-size: 11px;
+  font-style: italic;
+  color: #64748b;
+  margin-top: -6px;
+  margin-bottom: 12px;
+}
+
+.template-modern .modern-footer {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 10px;
+  color: #64748b;
+}
+
+.template-modern .modern-sign-area {
+  text-align: right;
+  color: #1e293b;
+}
+
+.template-modern .modern-sign-line {
+  margin-top: 40px;
+  border-top: 1px solid #94a3b8;
+  padding-top: 4px;
+  width: 150px;
+  display: inline-block;
+}
+
+/* ==========================================================================
+   GLOBAL LOGO COMPONENT STYLING
+   ========================================================================== */
+.invoice-logo-wrapper {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.invoice-logo-wrapper img {
+  max-height: 60px;
+  max-width: 150px;
+  object-fit: contain;
+}
+
+/* ==========================================================================
+   PRINT MEDIA COMPLIANCE RULES
+   ========================================================================== */
+@media print {
+  /* Hide Dashboard Elements completely */
+  .sidebar,
+  .workspace-header,
+  .table-row-actions,
+  .table-append-row,
+  .no-print,
+  #btn-sidebar-toggle {
+    display: none !important;
+  }
+  
+  /* Reset general page styles for clean print */
+  body, html {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    height: auto !important;
+    width: auto !important;
+    overflow: visible !important;
+  }
+  
+  .app-container {
+    display: block !important;
+    height: auto !important;
+    width: auto !important;
+    overflow: visible !important;
+  }
+  
+  .workspace {
+    display: block !important;
+    height: auto !important;
+    width: auto !important;
+    overflow: visible !important;
+  }
+
+  .a4-sheet-container {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: none !important;
+    overflow: visible !important;
+    height: auto !important;
+    width: auto !important;
+  }
+
+  .invoice-page {
+    width: 210mm !important;
+    /* Enforce hard A4 height so content can never bleed into next physical page's top margin */
+    height: 297mm !important;
+    min-height: 0 !important;
+    max-height: 297mm !important;
+    overflow: hidden !important;
+    padding: var(--margin-size, 12mm) !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    border: none;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    box-sizing: border-box !important;
+    page: portrait;
+    /* Prevent a page break inside a single invoice page div */
+    page-break-inside: avoid;
+  }
+
+  /* Landscape override */
+  .invoice-page.landscape {
+    width: 297mm !important;
+    height: 210mm !important;
+    max-height: 210mm !important;
+    page: landscape;
+  }
+
+  /* Apply page break BEFORE every continuation page so each .invoice-page
+     maps exactly to one physical printer page */
+  .invoice-page-continuation {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+
+  /* Also apply page break after all non-last pages (belt + suspenders) */
+  .invoice-page:not(.last-page) {
+    page-break-after: always;
+    break-after: page;
+  }
+
+  /* Last invoice page should not force a blank page after it */
+  .invoice-page.last-page {
+    page-break-after: auto !important;
+    break-after: auto !important;
+    /* Last page can be shorter than A4 — override height constraint */
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+
+  /* Continuation page header (compact, no full details) */
+  .page-continuation-header {
+    display: block !important;
+  }
+
+  /* ── Printable Table Borders — explicitly force borders in print mode ──
+     Browsers (Chrome, Edge) can strip table borders unless re-declared here.
+     border-collapse + collapsed borders are especially prone to disappearing. */
+
+  .template-tally th, .template-tally td, .template-tally table,
+  .template-gem th, .template-gem td, .template-gem table,
+  .template-modern th, .template-modern td, .template-modern table {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Tally/Classic template — restore all cell borders */
+  .template-tally .tally-bordered-table,
+  .template-tally .tally-grid-table {
+    border-collapse: collapse !important;
+    border: 1px solid #000000 !important;
+  }
+
+  .template-tally .tally-bordered-table th,
+  .template-tally .tally-bordered-table td,
+  .template-tally .tally-grid-table th,
+  .template-tally .tally-grid-table td {
+    border: 1px solid #000000 !important;
+    padding: 4px 6px !important;
+  }
+
+  .template-tally .tally-bordered-table th,
+  .template-tally .tally-grid-table th {
+    background-color: #f1f5f9 !important;
+  }
+
+  /* GeM template — restore all cell borders */
+  .template-gem table {
+    border-collapse: collapse !important;
+  }
+
+  .template-gem th,
+  .template-gem td {
+    border: 1px solid #0f172a !important;
+  }
+
+  /* Modern template — restore borders */
+  .template-modern table {
+    border-collapse: collapse !important;
+  }
+
+  .template-modern th,
+  .template-modern td {
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  /* Section divider lines */
+  .tally-double-border,
+  .gem-frame {
+    border: 2px solid #000000 !important;
+  }
+
+
+  /* Force background colors to print in modern layout */
+  .template-modern th {
+    background-color: var(--invoice-accent) !important;
+    color: #ffffff !important;
+  }
+  
+  .template-modern .modern-party-card,
+  .template-modern .modern-payment-card,
+  .template-modern .modern-meta-grid {
+    background-color: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  /* Contenteditable border clean-up — only remove the dotted editing underline
+     on non-table-cell elements (p, h1, h2, span, etc.).
+     Table cells (td/th) must keep their border declarations. */
+  :not(td):not(th)[contenteditable="true"] {
+    border-bottom: none !important;
+    background: none !important;
+  }
+
+  /* Also clean up table-cell contenteditable: just remove background tint,
+     keep their border intact */
+  td[contenteditable="true"],
+  th[contenteditable="true"] {
+    background: none !important;
+  }
+
+
+  /* ── Footer integrity: never split the summary / bank / HSN / T&C / sig blocks ── */
+  /* Keep each bottom section as an atomic print unit */
+  .tally-bottom-grid,
+  .gem-totals-section,
+  .modern-footer-grid {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* HSN breakup table stays together */
+  .tally-bottom-grid + section,
+  section[style*="border-top"] {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Signature + T&C area */
+  .tally-company-box,
+  .tally-sig-block {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Table rows should not break mid-row */
+  tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* The QR + bank details block */
+  .modern-qr-block,
+  .tally-bank-box {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (Adaptive dashboard)
+   ========================================================================== */
+@media (max-width: 992px) {
+  .btn-sidebar-toggle {
+    display: block;
+  }
+
+  .sidebar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    box-shadow: 10px 0 30px rgba(0,0,0,0.3);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .a4-sheet-container {
+    padding: 20px 10px;
+    align-items: flex-start;
+    overflow-x: auto; /* Fallback scroll */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Keep professional A4 aspect ratio & prevent squeezed columns on mobile */
+  .invoice-page {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    padding: var(--margin-size, 12mm) !important;
+    flex-shrink: 0;
+  }
+  
+  .invoice-page.landscape {
+    width: 297mm !important;
+    min-height: 210mm !important;
+    flex-shrink: 0;
+  }
+
+  /* Dynamic CSS Zoom to automatically scale and fit A4 layout on tall & narrow phones (e.g. Moto Edge 60 Fusion) - SCREEN ONLY */
+  #invoice-sheet {
+    transform-origin: top center;
+    zoom: 0.85;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #invoice-sheet {
+    zoom: 0.65;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  #invoice-sheet {
+    zoom: 0.48;
+  }
+}
+
+@media screen and (max-width: 412px) {
+  #invoice-sheet {
+    zoom: 0.45; /* Perfect fit for tall-aspect premium phones like Moto Edge Fusion */
+  }
+}
+
+@media screen and (max-width: 360px) {
+  #invoice-sheet {
+    zoom: 0.40;
+  }
+}
+
+/* Force full 100% scale for physical printing regardless of screen previews */
+@media print {
+  #invoice-sheet {
+    zoom: 1 !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .editor-status span:last-child {
+    display: none;
+  }
+}
+
+
+/* Print Layout Orientations */
+@media print {
+  .invoice-page.landscape {
+    width: 297mm !important;
+    min-height: 0 !important;
+    page: landscape !important;
+  }
+
+  .invoice-page.landscape:not(.last-page) {
+    page-break-after: always !important;
+  }
+
+  .invoice-page.landscape.last-page {
+    page-break-after: auto !important;
+  }
+
+  /* Ensure table rows don't get cut in half */
+  tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Repeat table header on every page */
+  thead {
+    display: table-header-group !important;
+  }
+
+  tfoot {
+    display: table-footer-group !important;
+  }
+}
+
+@page {
+  margin: 0;
+}
+
+@page landscape {
+  size: A4 landscape;
+  margin: 0;
+}
+
+@page portrait {
+  size: A4 portrait;
+  margin: 0;
+}
+
+/* 3. Column Visibility CSS Hiders */
+.invoice-page.hide-discount-col .col-discount {
+  display: none !important;
+}
+
+.invoice-page.hide-hsn-col .col-hsn {
+  display: none !important;
+}
+
+/* 4. Classic Dot-Matrix Typography override class */
+.monospace-invoice {
+  font-family: var(--font-mono) !important;
+  letter-spacing: -0.2px !important;
+}
+
+.monospace-invoice * {
+  font-family: var(--font-mono) !important;
+}
+
+.monospace-invoice h1,
+.monospace-invoice h2,
+.monospace-invoice h3,
+.monospace-invoice th,
+.monospace-invoice td,
+.monospace-invoice strong,
+.monospace-invoice span {
+  font-family: var(--font-mono) !important;
+}
+
+/* UNDER DEVELOPMENT
+.template-minimalist {
+  font-family: var(--font-sans);
+  color: #0f172a !important;
+}
+
+.template-minimalist th,
+.template-minimalist td {
+  font-family: var(--font-sans) !important;
+}
+
+.template-minimalist .minimal-table-row {
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.2s ease;
+}
+
+.template-minimalist .minimal-table-row:hover {
+  background-color: rgba(241, 245, 249, 0.4);
+}
+
+.template-minimalist .minimalist-qr-block {
+  border: 1px solid #e2e8f0;
+}
+
+.template-nordic {
+  font-family: var(--font-sans);
+  color: #1e293b !important;
+}
+
+.template-nordic th,
+.template-nordic td {
+  font-family: var(--font-sans) !important;
+}
+
+.template-nordic tr {
+  transition: background-color 0.2s ease;
+}
+
+.template-nordic tbody tr:hover {
+  background-color: rgba(248, 250, 252, 0.6);
+}
+*/
