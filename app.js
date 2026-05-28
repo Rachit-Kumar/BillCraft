@@ -24,6 +24,32 @@ let invoiceData = {
   showNotes: true,
   footerOnNewPage: false,  // if true, footer is always on its own dedicated last page
 
+  // e-Invoice specific fields
+  einvoiceIRN: '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+  einvoiceAckNo: '112233445566778',
+  einvoiceAckDate: '18-May-26',
+  consigneeName: 'DUMMY BUYER TRADING',
+  consigneeAddress: '123, Dummy Commercial Road, Gaya,\nChunna Gali More, Balaji Market,\nGaya, Bihar - 823001, India',
+  consigneeGSTIN: '10BBBBB0000B1Z7',
+  consigneeState: 'Bihar',
+  consigneeStateCode: '10',
+  buyerName: 'DUMMY BUYER TRADING',
+  buyerAddress: '123, Dummy Commercial Road, Gaya,\nChunna Gali More, Balaji Market,\nGaya, Bihar - 823001, India',
+  buyerGSTIN: '10BBBBB0000B1Z7',
+  buyerState: 'Bihar',
+  buyerStateCode: '10',
+  deliveryNote: '',
+  modeTermsOfPayment: 'Direct Export',
+  refNoDate: '',
+  otherReferences: '',
+  buyersOrderNo: '',
+  buyersOrderDate: '',
+  dispatchDocNo: '',
+  deliveryNoteDate: '',
+  dispatchedThrough: '',
+  destination: '',
+  termsOfDelivery: '',
+
   // Company details
   companyName: 'XXX YYY ZZZ CO',
   companyAddress: 'XXX, YYY Road, ZZZ Industrial Area,\nXXX Town, YYY State – 000000',
@@ -475,6 +501,7 @@ function getPageCapacity(pageRole) {
     classic: { firstHeader: isLand ? 56 : 74, contHeader: 12, tableHeader: 12 },
     gem:     { firstHeader: isLand ? 50 : 68, contHeader: 12, tableHeader: 10 },
     modern:  { firstHeader: isLand ? 52 : 70, contHeader: 12, tableHeader: 10 },
+    einvoice:{ firstHeader: isLand ? 56 : 74, contHeader: 12, tableHeader: 12 },
   }[tmpl] || { firstHeader: isLand ? 56 : 74, contHeader: 12, tableHeader: 12 };
 
   // ── Dynamic footer height ─────────────────────────────────────────────────
@@ -701,6 +728,8 @@ function renderInvoice() {
       pageHTML = `<div class="${classStr}">${getGemHTML(pageData)}</div>`;
     } else if (invoiceData.template === 'modern') {
       pageHTML = `<div class="${classStr}">${getModernHTML(pageData)}</div>`;
+    } else if (invoiceData.template === 'einvoice') {
+      pageHTML = `<div class="${classStr}">${getEInvoiceHTML(pageData)}</div>`;
     // UNDER DEVELOPMENT
     // } else if (invoiceData.template === 'minimalist') {
     //   pageHTML = `<div class="${classStr}">${getMinimalistHTML(pageData)}</div>`;
@@ -2436,6 +2465,15 @@ function initSidebarControls() {
       }
     });
   }
+
+  const demoEInvoiceBtn = document.getElementById('btn-demo-einvoice');
+  if (demoEInvoiceBtn) {
+    demoEInvoiceBtn.addEventListener('click', () => {
+      if (confirm('Load demo Indian GST e-Invoice data (direct export style)? This will overwrite the current draft.')) {
+        loadEInvoiceDemoInvoiceData();
+      }
+    });
+  }
   
   // Reset clean layout
   const resetBtn = document.getElementById('btn-reset');
@@ -2761,7 +2799,444 @@ function loadGeMDemoInvoiceData() {
 // ── Expose functions used in inline onclick="" HTML attributes ───────────────
 // Required when the script runs as type="module" (which scopes all declarations).
 // Without this, onclick="addItemRow()" would throw ReferenceError in production.
-window.addItemRow    = addItemRow;
-window.deleteItemRow = deleteItemRow;
-window.deleteTerm    = deleteTerm;
-window.addTermRow    = addTermRow;
+window.addItemRow    = window.addItemRow;
+window.deleteItemRow = window.deleteItemRow;
+window.deleteTerm    = window.deleteTerm;
+window.addTermRow    = window.addTermRow;
+window.loadEInvoiceDemoInvoiceData = loadEInvoiceDemoInvoiceData;
+
+// e-Invoice rendering function
+function getEInvoiceHTML(pageData) {
+  const { pageItems, startIndex, totals, isFirst, isLast, pageNum, totalPages } = pageData;
+
+  const itemsRows = pageItems.map((item, localIdx) => {
+    const globalIdx = startIndex + localIdx;
+    
+    // Heuristic for ledger items: check if it contains cartage, freight, discount, etc.
+    const isLedger = item.description.toLowerCase().includes('cartage') || 
+                     item.description.toLowerCase().includes('freight') || 
+                     item.description.toLowerCase().includes('shipping') ||
+                     item.description.toLowerCase().includes('delivery');
+                     
+    const slNoText = isLedger ? '' : (globalIdx + 1);
+    const qtyText = isLedger ? '' : item.qty;
+    const rateText = isLedger ? '' : formatCurrency(item.rate);
+    const perText = isLedger ? '' : escapeHTML(item.unit);
+    
+    return `
+    <tr>
+      <td class="center">${slNoText}
+        <div class="table-row-actions no-print">
+          <button class="btn-row-action btn-row-delete" onclick="deleteItemRow(${globalIdx})" title="Delete Line">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </div>
+      </td>
+      <td contenteditable="true" data-key="items[${globalIdx}].description" placeholder="Description of Goods">${escapeHTML(item.description)}</td>
+      <td class="center col-hsn" contenteditable="true" data-key="items[${globalIdx}].hsn" placeholder="-">${escapeHTML(item.hsn)}</td>
+      <td class="center" contenteditable="true" data-key="items[${globalIdx}].qty" placeholder="0">${qtyText}</td>
+      <td class="right" contenteditable="true" data-key="items[${globalIdx}].rate" placeholder="0.00">${rateText}</td>
+      <td class="center" contenteditable="true" data-key="items[${globalIdx}].unit" placeholder="UOM">${perText}</td>
+      <td class="right bold" data-computed="item-taxable-${globalIdx}">₹${formatCurrency(item.taxableValue)}</td>
+    </tr>
+    `;
+  }).join('');
+
+  // Auto-appended Output GST Tax Rows in Item List for e-Invoice!
+  let taxRows = '';
+  if (isLast && pageItems.length > 0) {
+    if (totals.isIntraState) {
+      // Intra-state taxes: CGST & SGST
+      const cgstRate = totals.items[0]?.cgstRate || 9;
+      const sgstRate = totals.items[0]?.sgstRate || 9;
+      taxRows += `
+      <tr class="ledger-addition-row bold">
+        <td></td>
+        <td class="ledger-desc">OUTPUT CGST ${cgstRate}%</td>
+        <td class="center col-hsn"></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="right">₹${formatCurrency(totals.totalCGSTAmt)}</td>
+      </tr>
+      <tr class="ledger-addition-row bold">
+        <td></td>
+        <td class="ledger-desc">OUTPUT SGST ${sgstRate}%</td>
+        <td class="center col-hsn"></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="right">₹${formatCurrency(totals.totalSGSTAmt)}</td>
+      </tr>
+      `;
+    } else {
+      // Inter-state taxes: IGST
+      const igstRate = totals.items[0]?.igstRate || 18;
+      taxRows += `
+      <tr class="ledger-addition-row bold">
+        <td></td>
+        <td class="ledger-desc">OUTPUT IGST ${igstRate}%</td>
+        <td class="center col-hsn"></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="right">₹${formatCurrency(totals.totalIGSTAmt)}</td>
+      </tr>
+      `;
+    }
+  }
+
+  const tableHeader = `
+    <table class="tally-bordered-table tally-grid-table einvoice-grid-table">
+      <thead>
+        <tr>
+          <th style="width: 5%;">Sl<br>No.</th>
+          <th style="width: 48%;">Description of Goods and Services</th>
+          <th class="col-hsn" style="width: 12%;">HSN/SAC</th>
+          <th style="width: 8%;">Quantity</th>
+          <th style="width: 10%;">Rate</th>
+          <th style="width: 7%;">per</th>
+          <th style="width: 10%;">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${itemsRows}
+        ${taxRows}
+      </tbody>
+      ${isLast ? `
+        <tfoot>
+          <tr class="bold">
+            <td></td>
+            <td class="right">Total</td>
+            <td class="col-hsn"></td>
+            <td class="right">${totals.items.reduce((sum, item) => {
+              const isLedger = item.description.toLowerCase().includes('cartage') || 
+                               item.description.toLowerCase().includes('freight') || 
+                               item.description.toLowerCase().includes('shipping') ||
+                               item.description.toLowerCase().includes('delivery');
+              return sum + (isLedger ? 0 : (parseFloat(item.qty) || 0));
+            }, 0)} NOS</td>
+            <td></td>
+            <td></td>
+            <td class="right" id="calc-grand-total">₹${formatCurrency(totals.grandTotal)}</td>
+          </tr>
+        </tfoot>
+      ` : ''}
+    </table>`;
+
+  return `
+    <div class="tally-double-border template-einvoice">
+      
+      ${isFirst ? `
+        <!-- e-Invoice Top Header -->
+        <header class="einvoice-header">
+          <div class="einvoice-title-col">
+            <h1 class="bold text-center">Tax Invoice</h1>
+            <p class="text-center font-italic text-muted">Direct Export</p>
+            
+            <div class="einvoice-irn-box" style="margin-top: 15px;">
+              <p>IRN: <span class="bold" contenteditable="true" data-key="einvoiceIRN">${escapeHTML(invoiceData.einvoiceIRN || '')}</span></p>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 6px; font-size: 11px;">
+                <div>Ack No. : <strong contenteditable="true" data-key="einvoiceAckNo">${escapeHTML(invoiceData.einvoiceAckNo || '')}</strong></div>
+                <div>Ack Date : <strong contenteditable="true" data-key="einvoiceAckDate">${escapeHTML(invoiceData.einvoiceAckDate || '')}</strong></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="einvoice-qr-col">
+            <div class="qr-border-box">
+              <span class="qr-label">e-Invoice</span>
+              <img class="einvoice-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(invoiceData.einvoiceIRN || '')}" alt="e-Invoice QR">
+            </div>
+          </div>
+        </header>
+
+        <!-- Company & Parties Details Grid -->
+        <section class="einvoice-parties-grid">
+          <!-- Left Column: Seller, Consignee, Buyer -->
+          <div class="einvoice-parties-left">
+            <div class="party-box supplier-box">
+              <h3 contenteditable="true" data-key="companyName" class="bold">${escapeHTML(invoiceData.companyName || '')}</h3>
+              <p contenteditable="true" data-key="companyAddress" style="white-space: pre-wrap;">${escapeHTML(invoiceData.companyAddress || '')}</p>
+              <p>GSTIN/UIN: <strong contenteditable="true" data-key="companyGSTIN">${escapeHTML(invoiceData.companyGSTIN || '')}</strong></p>
+              <p>State Name: <strong contenteditable="true" data-key="companyState">${escapeHTML(invoiceData.companyState || '')}</strong>, Code : <strong contenteditable="true" data-key="companyStateCode">${escapeHTML(invoiceData.companyStateCode || '')}</strong></p>
+            </div>
+            
+            <div class="party-box consignee-box">
+              <div class="party-title">Consignee (Ship to)</div>
+              <h3 contenteditable="true" data-key="consigneeName" class="bold">${escapeHTML(invoiceData.consigneeName || invoiceData.clientName || '')}</h3>
+              <p contenteditable="true" data-key="consigneeAddress" style="white-space: pre-wrap;">${escapeHTML(invoiceData.consigneeAddress || invoiceData.clientAddress || '')}</p>
+              <p>GSTIN/UIN : <strong contenteditable="true" data-key="consigneeGSTIN">${escapeHTML(invoiceData.consigneeGSTIN || invoiceData.clientGSTIN || '')}</strong></p>
+              <p>State Name : <strong contenteditable="true" data-key="consigneeState">${escapeHTML(invoiceData.consigneeState || invoiceData.clientState || '')}</strong>, Code : <strong contenteditable="true" data-key="consigneeStateCode">${escapeHTML(invoiceData.consigneeStateCode || invoiceData.clientStateCode || '')}</strong></p>
+            </div>
+            
+            <div class="party-box buyer-box">
+              <div class="party-title">Buyer (Bill to)</div>
+              <h3 contenteditable="true" data-key="buyerName" class="bold">${escapeHTML(invoiceData.buyerName || invoiceData.clientName || '')}</h3>
+              <p contenteditable="true" data-key="buyerAddress" style="white-space: pre-wrap;">${escapeHTML(invoiceData.buyerAddress || invoiceData.clientAddress || '')}</p>
+              <p>GSTIN/UIN : <strong contenteditable="true" data-key="buyerGSTIN">${escapeHTML(invoiceData.buyerGSTIN || invoiceData.clientGSTIN || '')}</strong></p>
+              <p>State Name : <strong contenteditable="true" data-key="buyerState">${escapeHTML(invoiceData.buyerState || invoiceData.clientState || '')}</strong>, Code : <strong contenteditable="true" data-key="buyerStateCode">${escapeHTML(invoiceData.buyerStateCode || invoiceData.clientStateCode || '')}</strong></p>
+            </div>
+          </div>
+          
+          <!-- Right Column: Metadata Fields -->
+          <div class="einvoice-parties-right">
+            <table class="metadata-table">
+              <tr>
+                <td style="width: 50%;">Invoice No.<br><strong contenteditable="true" data-key="invoiceNo" placeholder="-">${escapeHTML(invoiceData.invoiceNo || '')}</strong></td>
+                <td style="width: 50%;">Dated<br><strong contenteditable="true" data-key="invoiceDate" placeholder="-">${escapeHTML(invoiceData.invoiceDate || '')}</strong></td>
+              </tr>
+              <tr>
+                <td>Delivery Note<br><strong contenteditable="true" data-key="deliveryNote" placeholder="-">${escapeHTML(invoiceData.deliveryNote || '')}</strong></td>
+                <td>Mode/Terms of Payment<br><strong contenteditable="true" data-key="modeTermsOfPayment" placeholder="-">${escapeHTML(invoiceData.modeTermsOfPayment || '')}</strong></td>
+              </tr>
+              <tr>
+                <td>Reference No. & Date<br><strong contenteditable="true" data-key="refNoDate" placeholder="-">${escapeHTML(invoiceData.refNoDate || '')}</strong></td>
+                <td>Other References<br><strong contenteditable="true" data-key="otherReferences" placeholder="-">${escapeHTML(invoiceData.otherReferences || '')}</strong></td>
+              </tr>
+              <tr>
+                <td>Buyer's Order No.<br><strong contenteditable="true" data-key="buyersOrderNo" placeholder="-">${escapeHTML(invoiceData.buyersOrderNo || '')}</strong></td>
+                <td>Dated<br><strong contenteditable="true" data-key="buyersOrderDate" placeholder="-">${escapeHTML(invoiceData.buyersOrderDate || '')}</strong></td>
+              </tr>
+              <tr>
+                <td>Dispatch Doc No.<br><strong contenteditable="true" data-key="dispatchDocNo" placeholder="-">${escapeHTML(invoiceData.dispatchDocNo || '')}</strong></td>
+                <td>Delivery Note Date<br><strong contenteditable="true" data-key="deliveryNoteDate" placeholder="-">${escapeHTML(invoiceData.deliveryNoteDate || '')}</strong></td>
+              </tr>
+              <tr>
+                <td>Dispatched through<br><strong contenteditable="true" data-key="dispatchedThrough" placeholder="-">${escapeHTML(invoiceData.dispatchedThrough || '')}</strong></td>
+                <td>Destination<br><strong contenteditable="true" data-key="destination" placeholder="-">${escapeHTML(invoiceData.destination || '')}</strong></td>
+              </tr>
+              <tr style="height: 100%;">
+                <td colspan="2" style="vertical-align: top; border-bottom: none;">Terms of Delivery<br><div contenteditable="true" data-key="termsOfDelivery" placeholder="-" style="min-height: 50px; font-weight: normal;">${escapeHTML(invoiceData.termsOfDelivery || '')}</div></td>
+              </tr>
+            </table>
+          </div>
+        </section>
+      ` : `
+        <!-- compact continuation header -->
+        <div class="page-continuation-header">
+          <span><strong>${escapeHTML(invoiceData.companyName || '')}</strong> | Invoice No: ${escapeHTML(invoiceData.invoiceNo || '')} | Date: ${escapeHTML(invoiceData.invoiceDate || '')}</span>
+          <span style="font-size: 9px; color: #888;">Page ${pageNum} of ${totalPages}</span>
+        </div>
+      `}
+
+      <!-- Items table -->
+      ${pageItems.length > 0 ? tableHeader : ''}
+      
+      <!-- Interactive Add Row Button for Editor UI -->
+      ${isLast && pageItems.length > 0 ? `
+        <div class="table-append-row no-print">
+          <button class="btn-add-row" onclick="addItemRow()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Item Row
+          </button>
+        </div>
+      ` : !isLast ? `
+        <div class="no-print" style="text-align:center; padding: 4px 0; font-size: 10px; color: #94a3b8;">— Continued on Page ${pageNum + 1} —</div>
+      ` : ''}
+
+      ${isLast ? `
+        <!-- Amount in Words -->
+        <section class="einvoice-words-section">
+          <div class="words-left">
+            Amount Chargeable (in words)<br>
+            <strong id="calc-words-total" style="font-size: 11px;">${totals.wordsTotal}</strong>
+          </div>
+          <div class="words-right bold italic">E. & O.E</div>
+        </section>
+
+        <!-- GST Breakup Table -->
+        <section class="einvoice-gst-section">
+          <table class="tally-bordered-table">
+            <thead>
+              <tr>
+                <th rowspan="2" style="width: 15%;">HSN/SAC</th>
+                <th rowspan="2" style="width: 20%;">Taxable<br>Value</th>
+                ${totals.isIntraState ? `
+                  <th colspan="2" style="width: 25%;">Central Tax (CGST)</th>
+                  <th colspan="2" style="width: 25%;">State Tax (SGST)</th>
+                ` : `
+                  <th colspan="2" style="width: 50%;">Integrated Tax (IGST)</th>
+                `}
+                <th rowspan="2" style="width: 15%;">Total<br>Tax Amount</th>
+              </tr>
+              <tr>
+                ${totals.isIntraState ? `
+                  <th style="font-size:8px;">Rate</th><th style="font-size:8px;">Amount</th>
+                  <th style="font-size:8px;">Rate</th><th style="font-size:8px;">Amount</th>
+                ` : `
+                  <th style="font-size:8px;">Rate</th><th style="font-size:8px;">Amount</th>
+                `}
+              </tr>
+            </thead>
+            <tbody>
+              ${getHSNBreakupHTML(totals)}
+            </tbody>
+            <tfoot>
+              <tr class="bold">
+                <td class="center">Total</td>
+                <td class="right">₹${formatCurrency(totals.subtotalTaxable)}</td>
+                ${totals.isIntraState ? `
+                  <td></td>
+                  <td class="right">₹${formatCurrency(totals.totalCGSTAmt)}</td>
+                  <td></td>
+                  <td class="right">₹${formatCurrency(totals.totalSGSTAmt)}</td>
+                ` : `
+                  <td></td>
+                  <td class="right">₹${formatCurrency(totals.totalIGSTAmt)}</td>
+                `}
+                <td class="right">₹${formatCurrency(totals.totalTax)}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </section>
+
+        <!-- GST Tax in Words -->
+        <section class="einvoice-tax-words-section">
+          Tax Amount (in words) : <strong style="font-size: 11px;">INR ${numberToWords(totals.totalTax).replace('Rupees ', '').replace(' Only', ' Only')}</strong>
+        </section>
+
+        <!-- Declaration & Sign Block -->
+        <section class="einvoice-footer-section">
+          <div class="declaration-box">
+            <span class="bold" style="text-decoration: underline;">Declaration:</span><br>
+            <p contenteditable="true" data-key="notes" style="font-size: 10px; margin-top: 4px; line-height: 1.4;">${escapeHTML(invoiceData.notes)}</p>
+          </div>
+          
+          <div class="signature-box">
+            <p>for <strong contenteditable="true" data-key="companyName">${escapeHTML(invoiceData.companyName)}</strong></p>
+            
+            <!-- Dynamic Blue Stamp/Signature Area! -->
+            <div class="einvoice-stamp-wrapper">
+              <div class="stamp-bg">
+                <span class="stamp-company" contenteditable="true" data-key="companyName">${escapeHTML(invoiceData.companyName)}</span>
+                <svg class="stamp-sig-svg" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M 20 40 Q 60 10, 100 35 T 180 20 Q 150 45, 120 50 Q 80 40, 50 30" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round"/>
+                  <path d="M 40 45 L 60 15 M 100 48 L 125 10 M 140 35 Q 160 5, 175 40" fill="none" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+                <span class="stamp-designation">Director</span>
+              </div>
+            </div>
+            
+            <p class="auth-label">Authorised Signatory</p>
+          </div>
+        </section>
+
+        <footer class="einvoice-bottom-footer font-italic text-center text-muted">
+          This is a Computer Generated Invoice
+        </footer>
+      ` : ''}
+    </div>
+  `;
+}
+
+// Load e-Invoice Demo Data helper
+function loadEInvoiceDemoInvoiceData() {
+  invoiceData.template = 'einvoice';
+  invoiceData.themeColor = '#0f172a';
+  invoiceData.showLogo = false;
+  invoiceData.showUPIQR = false;
+  invoiceData.smartTax = true;
+
+  // Company details
+  invoiceData.companyName = 'DUMMY SELLER PRIVATE LIMITED';
+  invoiceData.companyAddress = '456, Dummy Industrial Area, Faridabad\nHaryana - 121001, India';
+  invoiceData.companyPhone = '0129-XXXXXXX';
+  invoiceData.companyEmail = 'contact@dummyseller.in';
+  invoiceData.companyGSTIN = '06AAAAA0000A1Z2';
+  invoiceData.companyPAN = 'AAAAA0000A';
+  invoiceData.companyState = 'Haryana';
+  invoiceData.companyStateCode = '06';
+  invoiceData.companyExtra = 'Ack No. : 112233445566778 | Ack Date : 18-May-26';
+
+  // Client Details
+  invoiceData.clientName = 'DUMMY BUYER TRADING';
+  invoiceData.clientAddress = '123, Dummy Commercial Road, Gaya,\nChunna Gali More, Balaji Market,\nGaya, Bihar - 823001, India';
+  invoiceData.clientGSTIN = '10BBBBB0000B1Z7';
+  invoiceData.clientPAN = 'BBBBB0000B';
+  invoiceData.clientState = 'Bihar';
+  invoiceData.clientStateCode = '10';
+  invoiceData.clientPhone = '9999999999';
+  invoiceData.clientExtra = 'Buyer (Bill to) & Consignee';
+
+  // Consignee Specific Details
+  invoiceData.consigneeName = 'DUMMY BUYER TRADING';
+  invoiceData.consigneeAddress = '123, Dummy Commercial Road, Gaya,\nChunna Gali More, Balaji Market,\nGaya, Bihar - 823001, India';
+  invoiceData.consigneeGSTIN = '10BBBBB0000B1Z7';
+  invoiceData.consigneeState = 'Bihar';
+  invoiceData.consigneeStateCode = '10';
+
+  // Buyer Specific Details
+  invoiceData.buyerName = 'DUMMY BUYER TRADING';
+  invoiceData.buyerAddress = '123, Dummy Commercial Road, Gaya,\nChunna Gali More, Balaji Market,\nGaya, Bihar - 823001, India';
+  invoiceData.buyerGSTIN = '10BBBBB0000B1Z7';
+  invoiceData.buyerState = 'Bihar';
+  invoiceData.buyerStateCode = '10';
+
+  // e-Invoice specific fields
+  invoiceData.einvoiceIRN = '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
+  invoiceData.einvoiceAckNo = '112233445566778';
+  invoiceData.einvoiceAckDate = '18-May-26';
+
+  // e-Invoice metadata details
+  invoiceData.invoiceNo = 'TFPL/26-27/022';
+  invoiceData.invoiceDate = '18-May-26';
+  invoiceData.deliveryNote = '';
+  invoiceData.modeTermsOfPayment = 'Direct Export';
+  invoiceData.refNoDate = '';
+  invoiceData.otherReferences = '';
+  invoiceData.buyersOrderNo = '';
+  invoiceData.buyersOrderDate = '';
+  invoiceData.dispatchDocNo = '';
+  invoiceData.deliveryNoteDate = '';
+  invoiceData.dispatchedThrough = '';
+  invoiceData.destination = '';
+  invoiceData.termsOfDelivery = '';
+
+  // Items
+  invoiceData.items = [
+    {
+      description: 'Dummy Item Name 4" X 6"',
+      hsn: '96121090',
+      qty: 1,
+      unit: 'NOS',
+      rate: 2160.00,
+      gstRate: 18,
+      discount: 0
+    },
+    {
+      description: 'CARTAGE ON SALE',
+      hsn: '9965',
+      qty: 1,
+      unit: 'NOS',
+      rate: 180.00,
+      gstRate: 18,
+      discount: 0
+    }
+  ];
+
+  // Bank Info
+  invoiceData.bankName = 'STATE BANK OF INDIA';
+  invoiceData.bankAccNo = '000000000000';
+  invoiceData.bankIFSC = 'SBIN0000000';
+  invoiceData.bankBranch = 'FARIDABAD Branch';
+
+  invoiceData.terms = [
+    'Subject to Haryana Jurisdiction E. & O. E.',
+    'Goods once sold will not be taken back.'
+  ];
+  invoiceData.authorizedSignatory = 'DUMMY SELLER PRIVATE LIMITED';
+  invoiceData.notes = 'We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.';
+
+  saveToLocalStorage();
+  
+  // Sync template toggler buttons
+  document.querySelectorAll('.template-btn').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.getAttribute('data-template') === 'einvoice') {
+      btn.classList.add('active');
+    }
+  });
+
+  renderInvoice();
+}
