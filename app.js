@@ -117,6 +117,40 @@ document.addEventListener('DOMContentLoaded', () => {
   initSidebarControls();
   renderInvoice();
   
+  // Initialize Sidebar Customization Accordions (Exclusive collapse/expand)
+  const accordionHeaders = document.querySelectorAll('.accordion-header');
+  accordionHeaders.forEach(header => {
+    header.addEventListener('click', () => {
+      const parent = header.parentElement;
+      const wasActive = parent.classList.contains('active');
+      
+      // Close all accordions
+      document.querySelectorAll('.accordion-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      // Toggle clicked accordion
+      if (!wasActive) {
+        parent.classList.add('active');
+      }
+    });
+  });
+
+  // Create dynamic hover editing tooltip on load
+  if (!document.getElementById('wysiwyg-tooltip')) {
+    const tooltip = document.createElement('div');
+    tooltip.id = 'wysiwyg-tooltip';
+    tooltip.className = 'wysiwyg-tooltip';
+    tooltip.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 20h9"></path>
+        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+      </svg>
+      <span>Click directly on A4 to Edit | Auto-saved</span>
+    `;
+    document.body.appendChild(tooltip);
+  }
+  
   // Listen for sidebar toggling on mobile
   const sidebarToggle = document.getElementById('btn-sidebar-toggle');
   const sidebarClose = document.getElementById('btn-sidebar-close');
@@ -498,11 +532,11 @@ function getPageCapacity(pageRole) {
   // contHeader: compact "Company | Invoice | Page X" banner = 12mm
   // tableHeader: thead (single or double row) = 10-12mm
   const oh = {
-    classic: { firstHeader: isLand ? 56 : 74, contHeader: 12, tableHeader: 12 },
-    gem:     { firstHeader: isLand ? 50 : 68, contHeader: 12, tableHeader: 10 },
-    modern:  { firstHeader: isLand ? 52 : 70, contHeader: 12, tableHeader: 10 },
-    einvoice:{ firstHeader: isLand ? 56 : 74, contHeader: 12, tableHeader: 12 },
-  }[tmpl] || { firstHeader: isLand ? 56 : 74, contHeader: 12, tableHeader: 12 };
+    classic: { firstHeader: isLand ? 60 : 88, contHeader: 12, tableHeader: 12 },
+    gem:     { firstHeader: isLand ? 56 : 84, contHeader: 12, tableHeader: 10 },
+    modern:  { firstHeader: isLand ? 54 : 76, contHeader: 12, tableHeader: 10 },
+    einvoice:{ firstHeader: isLand ? 62 : 98, contHeader: 12, tableHeader: 12 },
+  }[tmpl] || { firstHeader: isLand ? 60 : 88, contHeader: 12, tableHeader: 12 };
 
   // ── Dynamic footer height ─────────────────────────────────────────────────
   // Bottom-grid is a 2-column layout; height = max(left col, right col)
@@ -522,7 +556,11 @@ function getPageCapacity(pageRole) {
   // Base footer (no QR, no bank) = 40 + 22 + 17 + 26 = 105mm
 
   let footerMM;
-  if (isLand) {
+  if (tmpl === 'einvoice') {
+    // e-Invoice footer is constant, has HSN table + declaration box + signature box
+    footerMM = isLand ? 78 : 108;
+    if (invoiceData.showNotes) footerMM += 6;
+  } else if (isLand) {
     footerMM = 72; // landscape: content spreads wider, less height needed
     if (invoiceData.showUPIQR)       footerMM += 12;
     if (invoiceData.showBankDetails) footerMM += 10;
@@ -2090,24 +2128,107 @@ function escapeHTML(str) {
  * ==========================================================================
  */
 
+function highlightSidebarControl(dataKey) {
+  let elementId = '';
+  let accordionId = '';
+  
+  if (!dataKey) return;
+  
+  if (dataKey.startsWith('items[')) {
+    elementId = 'sidebar-item-discount';
+    accordionId = 'accordion-sections';
+  } else if (dataKey.startsWith('terms[')) {
+    elementId = 'sidebar-item-notes';
+    accordionId = 'accordion-sections';
+  } else if (['companyName', 'companyAddress', 'companyPhone', 'companyEmail', 'companyGSTIN', 'companyPAN', 'companyState', 'companyStateCode', 'companyExtra'].includes(dataKey)) {
+    elementId = 'sidebar-item-logo';
+    accordionId = 'accordion-branding';
+  } else if (['clientName', 'clientAddress', 'clientGSTIN', 'clientPAN', 'clientState', 'clientStateCode', 'clientPhone', 'clientExtra', 'consigneeName', 'consigneeAddress', 'consigneeGSTIN', 'consigneeState', 'consigneeStateCode', 'buyerName', 'buyerAddress', 'buyerGSTIN', 'buyerState', 'buyerStateCode'].includes(dataKey)) {
+    elementId = 'sidebar-item-smarttax';
+    accordionId = 'accordion-branding';
+  } else if (['invoiceNo', 'invoiceDate', 'placeOfSupply', 'dateOfSupply', 'reverseCharge'].includes(dataKey)) {
+    elementId = 'sidebar-item-orientation';
+    accordionId = 'accordion-presets';
+  } else if (['transportMode', 'vehicleNo', 'grNo', 'carrierName'].includes(dataKey)) {
+    elementId = 'sidebar-item-transport';
+    accordionId = 'accordion-sections';
+  } else if (['bankName', 'bankAccNo', 'bankIFSC', 'bankBranch'].includes(dataKey)) {
+    elementId = 'sidebar-item-bank';
+    accordionId = 'accordion-sections';
+  } else if (['notes', 'authorizedSignatory'].includes(dataKey)) {
+    elementId = 'sidebar-item-notes';
+    accordionId = 'accordion-sections';
+  } else if (dataKey === 'upiId') {
+    elementId = 'sidebar-item-qr';
+    accordionId = 'accordion-branding';
+  } else if (dataKey === 'einvoiceIRN' || dataKey === 'einvoiceAckNo' || dataKey === 'einvoiceAckDate') {
+    elementId = 'sidebar-item-smarttax';
+    accordionId = 'accordion-branding';
+  }
+
+  if (accordionId) {
+    document.querySelectorAll('.accordion-item').forEach(acc => {
+      if (acc.id === accordionId) {
+        acc.classList.add('active');
+      } else {
+        acc.classList.remove('active');
+      }
+    });
+  }
+
+  if (elementId) {
+    const settingEl = document.getElementById(elementId);
+    if (settingEl) {
+      document.querySelectorAll('.setting-item').forEach(item => item.classList.remove('active-flash'));
+      settingEl.classList.add('active-flash');
+      settingEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+}
+
 function attachEditableListeners() {
   const editables = document.querySelectorAll('#invoice-render-area [contenteditable="true"]');
+  const tooltip = document.getElementById('wysiwyg-tooltip');
   
   editables.forEach(el => {
+    // 1. Direct input state sync
     el.addEventListener('input', () => {
       const key = el.getAttribute('data-key');
       const text = el.innerText;
-      
-      // Update internal state
       updateStateValue(key, text);
-      
-      // Trigger reactive calculations immediately in calculated fields without fully re-rendering the whole page
       updateCalculatedDOM();
     });
 
+    // 2. Highlight corresponding sidebar control on focus
+    el.addEventListener('focus', () => {
+      const key = el.getAttribute('data-key');
+      highlightSidebarControl(key);
+      if (tooltip) tooltip.classList.remove('visible'); // hide hover tooltip on active focus
+    });
+
+    // 3. Clear highlights and full render on blur
     el.addEventListener('blur', () => {
-      // Do a full render on blur to ensure HTML styling defaults are cleaned up
+      document.querySelectorAll('.setting-item').forEach(item => item.classList.remove('active-flash'));
       renderInvoice();
+    });
+    
+    // 4. Custom Hover Tooltip Event Triggers
+    el.addEventListener('mouseenter', () => {
+      if (document.activeElement === el) return; // skip if actively focused
+      if (tooltip) {
+        const rect = el.getBoundingClientRect();
+        
+        // Populate and place floating tooltip right above the hovered node
+        tooltip.classList.add('visible');
+        tooltip.style.top = `${rect.top - tooltip.offsetHeight - 8 + window.scrollY}px`;
+        tooltip.style.left = `${rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + window.scrollX}px`;
+      }
+    });
+
+    el.addEventListener('mouseleave', () => {
+      if (tooltip) {
+        tooltip.classList.remove('visible');
+      }
     });
     
     // Prevent accidental formatting styles (bold/italic clipboard artifacts) on copy-paste

@@ -81,8 +81,10 @@ input, select, textarea, button {
    ========================================================================== */
 .sidebar {
   width: var(--sidebar-width);
-  background-color: var(--bg-sidebar);
-  border-right: 1px solid var(--border-color);
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -90,6 +92,158 @@ input, select, textarea, button {
   z-index: 10;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow-y: auto;
+}
+
+/* ==========================================================================
+   SIDEBAR ACCORDION COMPONENTS & UI EFFECTS
+   ========================================================================== */
+.accordion-item {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-card);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 8px;
+}
+
+.accordion-item:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: var(--bg-card-hover);
+}
+
+.accordion-header {
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.01);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.accordion-header:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--accent);
+}
+
+.accordion-header::after {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid var(--text-muted);
+  border-bottom: 2px solid var(--text-muted);
+  transform: rotate(45deg);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-right: 4px;
+  margin-top: -3px;
+}
+
+.accordion-item.active {
+  border-color: rgba(56, 189, 248, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.accordion-item.active .accordion-header {
+  background: rgba(56, 189, 248, 0.04);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--accent);
+}
+
+.accordion-item.active .accordion-header::after {
+  transform: rotate(-135deg);
+  border-color: var(--accent);
+  margin-top: 3px;
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 14px;
+}
+
+.accordion-item.active .accordion-content {
+  max-height: 1200px;
+  padding: 14px;
+}
+
+/* Inner Setting Item Adjustments */
+.accordion-content .setting-item {
+  background: rgba(15, 23, 42, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  transition: all 0.3s ease;
+}
+
+.accordion-content .setting-item:hover {
+  background: rgba(15, 23, 42, 0.5);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Pulsing highlight for setting fields (Bi-directional Linkage) */
+.setting-item.active-flash {
+  animation: pulse-border 1.5s infinite ease-in-out;
+  border-color: var(--accent) !important;
+  background: rgba(56, 189, 248, 0.08) !important;
+}
+
+@keyframes pulse-border {
+  0% {
+    box-shadow: 0 0 0 0px rgba(56, 189, 248, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 0 0px rgba(56, 189, 248, 0.4);
+  }
+}
+
+/* Modern WYSIWYG Context Floating Tooltip Widget */
+.wysiwyg-tooltip {
+  position: fixed;
+  background: rgba(15, 23, 42, 0.95);
+  color: #38bdf8;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 10px rgba(56, 189, 248, 0.1);
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(8px) scale(0.95);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wysiwyg-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.wysiwyg-tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 8px;
+  height: 8px;
+  background: rgba(15, 23, 42, 0.95);
+  border-right: 1px solid rgba(56, 189, 248, 0.3);
+  border-bottom: 1px solid rgba(56, 189, 248, 0.3);
 }
 
 /* Sidebar Overlay / Backdrop */
@@ -1339,10 +1493,10 @@ tr:hover .table-row-actions {
 
   .invoice-page {
     width: 210mm !important;
-    /* Enforce hard A4 height so content can never bleed into next physical page's top margin */
-    height: 297mm !important;
+    /* Enforce A4 height with a 1mm subpixel rounding buffer to prevent trailing blank pages */
+    height: 296mm !important;
     min-height: 0 !important;
-    max-height: 297mm !important;
+    max-height: 296mm !important;
     overflow: hidden !important;
     padding: var(--margin-size, 12mm) !important;
     box-shadow: none !important;
@@ -1359,28 +1513,27 @@ tr:hover .table-row-actions {
   /* Landscape override */
   .invoice-page.landscape {
     width: 297mm !important;
-    height: 210mm !important;
-    max-height: 210mm !important;
+    height: 209mm !important;
+    max-height: 209mm !important;
     page: landscape;
   }
 
-  /* Apply page break BEFORE every continuation page so each .invoice-page
-     maps exactly to one physical printer page */
+  /* Remove double page break before continuation, rely on page-break-after instead */
   .invoice-page-continuation {
-    page-break-before: always !important;
-    break-before: page !important;
+    page-break-before: auto !important;
+    break-before: auto !important;
   }
 
-  /* Also apply page break after all non-last pages (belt + suspenders) */
+  /* Apply clean page break after all non-last pages */
   .invoice-page:not(.last-page) {
-    page-break-after: always;
-    break-after: page;
+    page-break-after: always !important;
+    break-after: page !important;
   }
 
   /* Last invoice page should not force a blank page after it */
   .invoice-page.last-page {
-    page-break-after: auto !important;
-    break-after: auto !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
     /* Last page can be shorter than A4 — override height constraint */
     height: auto !important;
     max-height: none !important;
@@ -1484,7 +1637,11 @@ tr:hover .table-row-actions {
   /* Keep each bottom section as an atomic print unit */
   .tally-bottom-grid,
   .gem-totals-section,
-  .modern-footer-grid {
+  .modern-footer-grid,
+  .einvoice-words-section,
+  .einvoice-gst-section,
+  .einvoice-tax-words-section,
+  .einvoice-footer-section {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }

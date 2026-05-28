@@ -135,165 +135,195 @@
           </div>
         </div>
 
-        <!-- Global Settings Section -->
+        <!-- Global Settings Section with Accordion Groups -->
         <div class="menu-section">
           <h3>Invoice Customization</h3>
-
-          <div class="setting-item">
-            <label for="theme-color">Accent Color</label>
-            <div class="color-picker-wrapper">
-              <input type="color" id="theme-color" value="#0f172a">
-              <div class="color-presets">
-                <span class="color-preset active" style="background-color: #0f172a;" data-color="#0f172a"></span>
-                <span class="color-preset" style="background-color: #005f73;" data-color="#005f73"></span>
-                <span class="color-preset" style="background-color: #1b4332;" data-color="#1b4332"></span>
-                <span class="color-preset" style="background-color: #5c0624;" data-color="#5c0624"></span>
+          
+          <!-- Accordion Group 1: Presets & Styling -->
+          <div class="accordion-item active" id="accordion-presets">
+            <div class="accordion-header">
+              <span>Style & Page Layout</span>
+            </div>
+            <div class="accordion-content">
+              
+              <div class="setting-item" id="sidebar-item-theme">
+                <label for="theme-color">Accent Color</label>
+                <div class="color-picker-wrapper">
+                  <input type="color" id="theme-color" value="#0f172a">
+                  <div class="color-presets">
+                    <span class="color-preset active" style="background-color: #0f172a;" data-color="#0f172a"></span>
+                    <span class="color-preset" style="background-color: #005f73;" data-color="#005f73"></span>
+                    <span class="color-preset" style="background-color: #1b4332;" data-color="#1b4332"></span>
+                    <span class="color-preset" style="background-color: #5c0624;" data-color="#5c0624"></span>
+                  </div>
+                </div>
               </div>
+
+              <div class="setting-item" id="sidebar-item-margins">
+                <label for="page-margins">A4 Margins (Print Only)</label>
+                <div class="slider-container">
+                  <input type="range" id="page-margins" min="5" max="25" value="12" step="1">
+                  <span id="margin-value">12mm</span>
+                </div>
+              </div>
+
+              <div class="setting-item" id="sidebar-item-orientation">
+                <label for="page-orientation">Page Orientation</label>
+                <select id="page-orientation">
+                  <option value="portrait">A4 Portrait (Vertical)</option>
+                  <option value="landscape">A4 Landscape (Horizontal)</option>
+                </select>
+              </div>
+
+              <div class="setting-item" id="sidebar-item-typography">
+                <label for="font-family-select">Typography Theme</label>
+                <select id="font-family-select">
+                  <option value="sans">Modern Corporate</option>
+                  <option value="mono">Classic Dot-Matrix (Monospace)</option>
+                </select>
+              </div>
+
             </div>
           </div>
 
-          <div class="setting-item">
-            <div class="toggle-control">
-              <span>Show Company Logo</span>
-              <label class="switch">
-                <input type="checkbox" id="toggle-logo">
-                <span class="slider"></span>
-              </label>
+          <!-- Accordion Group 2: Branding & QR Setup -->
+          <div class="accordion-item" id="accordion-branding">
+            <div class="accordion-header">
+              <span>Tax & Branding Details</span>
             </div>
-            <div class="logo-upload-container hidden" id="logo-upload-box">
-              <label class="logo-upload-label" for="logo-file">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                  <polyline points="21 15 16 10 5 21"></polyline>
-                </svg>
-                <span>Upload Logo (PNG/JPG)</span>
-              </label>
-              <input type="file" id="logo-file" accept="image/*" class="file-input">
-              <button class="btn btn-sm btn-danger hidden" id="btn-remove-logo">Remove Logo</button>
-            </div>
-          </div>
+            <div class="accordion-content">
 
-          <div class="setting-item">
-            <div class="toggle-control">
-              <span>Add UPI Scan to Pay QR</span>
-              <label class="switch">
-                <input type="checkbox" id="toggle-qr" checked>
-                <span class="slider"></span>
-              </label>
-            </div>
-            <div class="qr-settings" id="qr-settings-box">
-              <label for="upi-id-input">Merchant UPI ID</label>
-              <input type="text" id="upi-id-input" placeholder="merchant@upi" value="xxx@yyy">
-            </div>
-          </div>
+              <div class="setting-item" id="sidebar-item-logo">
+                <div class="toggle-control">
+                  <span>Show Company Logo</span>
+                  <label class="switch">
+                    <input type="checkbox" id="toggle-logo">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="logo-upload-container hidden" id="logo-upload-box">
+                  <label class="logo-upload-label" for="logo-file">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                      <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                      <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                    <span>Upload Logo (PNG/JPG)</span>
+                  </label>
+                  <input type="file" id="logo-file" accept="image/*" class="file-input">
+                  <button class="btn btn-sm btn-danger hidden" id="btn-remove-logo">Remove Logo</button>
+                </div>
+              </div>
 
-          <div class="setting-item">
-            <div class="toggle-control">
-              <span>Smart Tax Routing</span>
-              <label class="switch">
-                <input type="checkbox" id="toggle-smart-tax" checked>
-                <span class="slider"></span>
-              </label>
-            </div>
-            <p class="setting-help">Auto-routing CGST/SGST if Company State matches Buyer State, else IGST.</p>
-          </div>
+              <div class="setting-item" id="sidebar-item-qr">
+                <div class="toggle-control">
+                  <span>Add UPI Scan to Pay QR</span>
+                  <label class="switch">
+                    <input type="checkbox" id="toggle-qr" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="qr-settings" id="qr-settings-box">
+                  <label for="upi-id-input">Merchant UPI ID</label>
+                  <input type="text" id="upi-id-input" placeholder="merchant@upi" value="xxx@yyy">
+                </div>
+              </div>
 
-          <div class="setting-item" id="manual-tax-box" style="display: none;">
-            <label for="manual-tax-type">Override Tax Scheme</label>
-            <select id="manual-tax-type">
-              <option value="intra">Intra-State (CGST + SGST)</option>
-              <option value="inter">Inter-State (IGST)</option>
-            </select>
-          </div>
+              <div class="setting-item" id="sidebar-item-smarttax">
+                <div class="toggle-control">
+                  <span>Smart Tax Routing</span>
+                  <label class="switch">
+                    <input type="checkbox" id="toggle-smart-tax" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <p class="setting-help">Auto-routing CGST/SGST if Company State matches Buyer State, else IGST.</p>
+              </div>
 
-          <div class="setting-item">
-            <label for="page-margins">A4 Margins (Print Only)</label>
-            <div class="slider-container">
-              <input type="range" id="page-margins" min="5" max="25" value="12" step="1">
-              <span id="margin-value">12mm</span>
-            </div>
-          </div>
+              <div class="setting-item" id="manual-tax-box" style="display: none;">
+                <label for="manual-tax-type">Override Tax Scheme</label>
+                <select id="manual-tax-type">
+                  <option value="intra">Intra-State (CGST + SGST)</option>
+                  <option value="inter">Inter-State (IGST)</option>
+                </select>
+              </div>
 
-          <div class="setting-item">
-            <label for="page-orientation">Page Orientation</label>
-            <select id="page-orientation">
-              <option value="portrait">A4 Portrait (Vertical)</option>
-              <option value="landscape">A4 Landscape (Horizontal)</option>
-            </select>
-          </div>
-
-          <div class="setting-item">
-            <label for="font-family-select">Typography Theme</label>
-            <select id="font-family-select">
-              <option value="sans">Modern Corporate</option>
-              <option value="mono">Classic Dot-Matrix (Monospace)</option>
-            </select>
-          </div>
-
-          <div class="setting-item">
-            <div class="toggle-control">
-              <span>Show Discount Column</span>
-              <label class="switch">
-                <input type="checkbox" id="toggle-discount" checked>
-                <span class="slider"></span>
-              </label>
             </div>
           </div>
 
-          <div class="setting-item">
-            <div class="toggle-control">
-              <span>Show HSN/SAC Column</span>
-              <label class="switch">
-                <input type="checkbox" id="toggle-hsn" checked>
-                <span class="slider"></span>
-              </label>
+          <!-- Accordion Group 3: Optional Column Sections -->
+          <div class="accordion-item" id="accordion-sections">
+            <div class="accordion-header">
+              <span>Optional Column Sections</span>
             </div>
-          </div>
+            <div class="accordion-content">
 
-          <div class="setting-item">
-            <div class="toggle-control">
-              <span>Show Transport Details</span>
-              <label class="switch">
-                <input type="checkbox" id="toggle-transport" checked>
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
+              <div class="setting-item" id="sidebar-item-discount">
+                <div class="toggle-control">
+                  <span>Show Discount Column</span>
+                  <label class="switch">
+                    <input type="checkbox" id="toggle-discount" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
 
-          <div class="setting-item">
-            <div class="toggle-control">
-              <span>Show Bank Details</span>
-              <label class="switch">
-                <input type="checkbox" id="toggle-bank" checked>
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
+              <div class="setting-item" id="sidebar-item-hsn">
+                <div class="toggle-control">
+                  <span>Show HSN/SAC Column</span>
+                  <label class="switch">
+                    <input type="checkbox" id="toggle-hsn" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
 
-          <div class="setting-item">
-            <div class="toggle-control">
-              <span>Show Notes & Declarations</span>
-              <label class="switch">
-                <input type="checkbox" id="toggle-notes" checked>
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
+              <div class="setting-item" id="sidebar-item-transport">
+                <div class="toggle-control">
+                  <span>Show Transport Details</span>
+                  <label class="switch">
+                    <input type="checkbox" id="toggle-transport" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
 
-          <div class="setting-item">
-            <div class="toggle-control">
-              <span>Footer on New Page</span>
-              <label class="switch">
-                <input type="checkbox" id="toggle-footer-page">
-                <span class="slider"></span>
-              </label>
+              <div class="setting-item" id="sidebar-item-bank">
+                <div class="toggle-control">
+                  <span>Show Bank Details</span>
+                  <label class="switch">
+                    <input type="checkbox" id="toggle-bank" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="setting-item" id="sidebar-item-notes">
+                <div class="toggle-control">
+                  <span>Show Notes & Declarations</span>
+                  <label class="switch">
+                    <input type="checkbox" id="toggle-notes" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="setting-item" id="sidebar-item-footer">
+                <div class="toggle-control">
+                  <span>Footer on New Page</span>
+                  <label class="switch">
+                    <input type="checkbox" id="toggle-footer-page">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <p style="font-size: 10px; color: #94a3b8; margin-top: 3px; line-height: 1.4;">
+                  ON: Footer always starts on a fresh page. Items fill pages maximally.<br>
+                  OFF: Footer shares the last items page.
+                </p>
+              </div>
+
             </div>
-            <p style="font-size: 10px; color: #94a3b8; margin-top: 3px; line-height: 1.4;">
-              ON: Footer always starts on a fresh page. Items fill pages maximally.<br>
-              OFF: Footer shares the last items page (auto-splits if needed).
-            </p>
           </div>
 
         </div>
