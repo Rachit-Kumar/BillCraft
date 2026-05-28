@@ -92,7 +92,58 @@ input, select, textarea, button {
   overflow-y: auto;
 }
 
+/* Sidebar Overlay / Backdrop */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.sidebar-overlay.active {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Sidebar Close Button */
+.btn-sidebar-close {
+  display: none;
+  position: absolute;
+  top: 24px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 12;
+}
+
+.btn-sidebar-close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+
+.btn-sidebar-close svg {
+  display: block;
+}
+
 .sidebar-header {
+  position: relative;
   padding: 24px 20px;
   border-bottom: 1px solid var(--border-color);
 }
@@ -1463,8 +1514,12 @@ tr:hover .table-row-actions {
     display: block;
   }
 
+  .btn-sidebar-close {
+    display: flex;
+  }
+
   .sidebar {
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     bottom: 0;

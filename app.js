@@ -93,11 +93,36 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Listen for sidebar toggling on mobile
   const sidebarToggle = document.getElementById('btn-sidebar-toggle');
+  const sidebarClose = document.getElementById('btn-sidebar-close');
+  const sidebarOverlay = document.getElementById('sidebar-overlay');
   const sidebar = document.getElementById('sidebar');
+
+  function openSidebar() {
+    sidebar.classList.add('open');
+    if (sidebarOverlay) sidebarOverlay.classList.add('active');
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+  }
+
   if (sidebarToggle) {
     sidebarToggle.addEventListener('click', () => {
-      sidebar.classList.toggle('open');
+      if (sidebar.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
     });
+  }
+
+  if (sidebarClose) {
+    sidebarClose.addEventListener('click', closeSidebar);
+  }
+
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', closeSidebar);
   }
 });
 
